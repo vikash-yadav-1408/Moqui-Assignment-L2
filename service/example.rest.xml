@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources xmlns:xsi="http://www.w3.org/2001/XMLSchema" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/rest-api-2.1.xsd"
+           name="Example" displayName="REST API example" version="2.0.0">
+
+    <resource name="examples" require-authentication="anonymous-all" require-session-token = "false">
+        <method type="get"><entity name="Example" operation="list"/></method>
+        <id name="exampleId">
+            <method type="get"><entity name="Example" operation="one"/></method>
+            <method type="delete"><entity name="Example" operation="delete"/></method>
+        </id>
+
+        <resource name="create" require-authentication="anonymous-all">
+            <method type="post"><service name="moqui.ExampleServices.create#Example"/></method>
+        </resource>
+
+        <resource name="update" require-authentication="anonymous-all" >
+            <method type="patch"><service name="moqui.ExampleServices.update#Example"/></method>
+        </resource>
+
+        <resource name="login" require-authentication="anonymous-all">
+            <method type="get"><service name="moqui.ExampleServices.login#User"/></method>
+        </resource>
+
+    </resource>
+
+</resources>

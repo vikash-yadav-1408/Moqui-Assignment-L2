@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<services xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://moqui.org/xsd/service-definition-2.1.xsd">
+
+    <service verb="create" noun="Example" displayName="Create an Example entity" type="entity-auto" allow-remote="true" authenticate="anonymous-all">
+        <description>To insert new record into database</description>
+        <in-parameters>
+            <auto-parameters include="nonpk"/>
+            <parameter name="exampleId" required="true"/>
+            <parameter name="exampleName"/>
+            <parameter name="exampleDate"></parameter>
+            <parameter name="examplePrice"></parameter>
+            <parameter name="exampleQuantity"></parameter>
+            <parameter name="lastUpdatedStamp" default="ec.user.nowTimestamp"></parameter>
+        </in-parameters>
+        <out-parameters>
+            <parameter name="exampleId"></parameter>
+            <parameter name="exampleName"/>
+            <parameter name="exampleDate"></parameter>
+            <parameter name="examplePrice"></parameter>
+            <parameter name="exampleQuantity"></parameter>
+            <parameter name="lastUpdatedStamp"/>
+        </out-parameters>
+    </service>
+
+
+    <service verb="update" noun="Example" displayName="Update an Example"   authenticate="anonymous-all">
+        <description>To update record in database</description>
+        <in-parameters>
+
+            <parameter name="exampleId" required="true"/>
+            <parameter name="exampleName"/>
+            <parameter name="exampleDate"/>
+            <parameter name="examplePrice"/>
+            <parameter name="exampleQuantity"/>
+            <parameter name="lastUpdatedStamp" default="ec.user.nowTimestamp"/>
+
+        </in-parameters>
+        <actions>
+            <entity-find-one entity-name="Example" value-field="Example">
+                <field-map field-name="exampleId"/></entity-find-one>
+            <if condition="Example != null">
+                <then>
+                  <if condition = "!exampleName">
+                      <then>
+                            <set field="Example.exampleName" from="Example.exampleName"/>
+                      </then>
+                    <else>
+                        <set field="Example.exampleName" from="exampleName"/>
+                    </else>
+                </if>
+                <if condition = "!exampleDate">
+                    <then>
+                         <set field="Example.exampleDate" from="Example.exampleDate"/>
+                    </then>
+                    <else>
+                        <set field="Example.exampleDate" from="exampleDate"/>
+                    </else>
+                </if>
+                <if condition = "!examplePrice">
+                    <then>
+                        <set field="Example.examplePrice" from="Example.examplePrice"/>
+                    </then>
+                    <else>
+                        <set field="Example.examplePrice" from="examplePrice"/>
+                    </else>
+                </if>
+                <if condition = "!exampleQuantity">
+                    <then>
+                          <set field="Example.exampleQuantity" from="Example.exampleQuantity"/>
+                    </then>
+                    <else>
+                        <set field="Example.exampleQuantity" from="exampleQuantity"/>
+                    </else>
+                </if>
+                <entity-update value-field="Example"/>
+            </then>
+                <else>
+                    <service-call name="create#Example" in-map="[exampleId:exampleId, exampleName:exampleName, exampleDate:exampleDate, examplePrice:examplePrice, exampleQuantity:exampleQuantity ]"/>
+                </else>
+            </if>
+        </actions>
+        <out-parameters>
+            <parameter name="exampleId"/>
+            <parameter name="exampleName"/>
+            <parameter name="exampleQuantity"/>
+            <parameter name="examplePrice"/>
+            <parameter name="exampleDate"/>
+
+        </out-parameters>
+    </service>
+
+
+    <service verb="login" noun="User">
+        <in-parameters>
+            <parameter name="username" required="true"/>
+            <parameter name="password" required="true"/>
+        </in-parameters>
+        <out-parameters>
+            <parameter name="apiKey"/>
+            <parameter name="moquiSessionToken"/>
+        </out-parameters>
+
+        <actions>
+            <script>ec.user.loginUser(username,password)</script>
+            <set field="apiKey" from="ec.user.getLoginKey()"/>
+            <set field="moquiSessionToken" from="ec.web.sessionToken"/>
+        </actions>
+    </service>
+</services>
